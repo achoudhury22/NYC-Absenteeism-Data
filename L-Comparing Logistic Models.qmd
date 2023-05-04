@@ -1,0 +1,44 @@
+---
+title: "L - Comparing Logistic Models"
+author: "Anaan Choudhury"
+format: pdf
+---
+
+##Question 1
+```{r}
+library(Stat2Data)
+data("ICU")
+```
+
+```{r}
+library(dplyr)
+ICU <- mutate(ICU, AgeGroup = recode(AgeGroup,
+                                     `1` = "Young",
+                                     `2` = "Old",
+                                     `3` = "Elderly"
+                                    ),
+              AgeGroup = factor(AgeGroup, levels = c("Young", "Old", "Elderly"))
+              )
+```
+
+```{r}
+age_and_bp_add <- glm(Survive ~ AgeGroup + SysBP, data=ICU, family=binomial)
+age_and_bp_interaction <- glm(Survive ~ AgeGroup * SysBP, data=ICU, family=binomial)
+```
+age_and_bp_add is the reduced model because it is only additive. It doesn't account for effects of the coefficients on each other. 
+
+##Question 2
+```{r}
+anova(age_and_bp_add, age_and_bp_interaction, test = "Chisq")
+```
+P-value = 0.6788
+Very large, so we choose the reduced model. 
+Interaction doesn't discrease variance enough to warrant making the model longer and more complex. We always aim to use simpler, basic models. 
+
+##Question 3
+H0 - Null: A person’s age group doesn’t have a significant impact on the effect of Blood Pressure on survival
+
+HA - Alternative: A person’s age group does have a significant impact on the effect of Blood Pressure on survival
+
+
+
